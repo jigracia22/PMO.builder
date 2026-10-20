@@ -1,0 +1,15 @@
+{
+  "name": "pmo-tracker-github",
+  "displayName": "PMO tracker: GitHub",
+  "version": "0.1.0",
+  "description": "pmo-tracker adapter for GitHub Issues, with optional GitHub Projects v2 fields mapped from .pmo/config.json. Uses the gh CLI.",
+  "author": {
+    "name": "jigracia22",
+    "url": "https://github.com/jigracia22"
+  },
+  "homepage": "https://github.com/jigracia22/PMO_building_agents_team",
+  "repository": "https://github.com/jigracia22/PMO_building_agents_team",
+  "license": "MIT",
+  "keywords": ["pmo", "tracker", "github", "issues", "projects"],
+  "dependencies": ["pmo"]
+}

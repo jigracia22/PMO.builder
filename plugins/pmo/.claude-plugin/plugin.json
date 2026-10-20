@@ -1,0 +1,14 @@
+{
+  "name": "pmo",
+  "displayName": "PMO",
+  "version": "0.1.0",
+  "description": "Multi-agent delivery loop for Claude Code: complexity routing, design, build, code review, graded audit, QA and PR, with critical-path protection, scoped grants and per-run metrics. Tracker-agnostic through the pmo-tracker protocol.",
+  "author": {
+    "name": "jigracia22",
+    "url": "https://github.com/jigracia22"
+  },
+  "homepage": "https://github.com/jigracia22/PMO_building_agents_team",
+  "repository": "https://github.com/jigracia22/PMO_building_agents_team",
+  "license": "MIT",
+  "keywords": ["multi-agent", "orchestration", "code-review", "audit", "qa", "workflow"]
+}

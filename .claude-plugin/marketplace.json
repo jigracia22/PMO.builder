@@ -1,0 +1,20 @@
+{
+  "name": "pmo-building-agents-team",
+  "description": "PMO: a measured multi-agent delivery loop for Claude Code, plus its issue-tracker adapters",
+  "owner": {
+    "name": "jigracia22",
+    "url": "https://github.com/jigracia22"
+  },
+  "plugins": [
+    {
+      "name": "pmo",
+      "source": "./plugins/pmo",
+      "description": "Core loop: design, build, review, audit, QA and PR, with file protection, grants and per-run metrics"
+    },
+    {
+      "name": "pmo-tracker-github",
+      "source": "./plugins/pmo-tracker-github",
+      "description": "GitHub Issues (and optional Projects v2) adapter for the pmo-tracker protocol"
+    }
+  ]
+}

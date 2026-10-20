@@ -1,0 +1,4 @@
+node_modules/
+.DS_Store
+# PMO runtime state (grants, active agent, metrics scratch) when dogfooding in this repo
+.pmo/runtime/

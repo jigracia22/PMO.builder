@@ -33,6 +33,24 @@ The script can't catch the rest. Check it by hand in review:
 - [ ] **Agent names get a namespace.** Plugin agents are `pmo:<agent>`. Update every `subagent_type`, every `SubagentStop` matcher and the agent-name sets in `source:.claude/hooks/validate-output-contract.js:91-109` and `source:tasks/scripts/pmo-metrics.mjs:267` through `lib/agents.mjs`. A test walks prompts and hooks looking for unprefixed names.
 - [ ] Check whether any agent relies on frontmatter `hooks`, `permissionMode` or `mcpServers`: plugin agents ignore them, so that enforcement has to move to plugin hooks.
 
+### Findings disposition (F3, added 2026-10-20)
+
+The source harness now decides what happens to every review finding before the PR closes, in `source:.claude/pmo/hallazgos.md`. Port it as a core rule, not as a source-project extension.
+
+- **Why.** In 16 PRs of the source harness, 89 deferred findings created 86 new tracker items (about 5.4 per PR). 54 % touched only files the PR already changed, 81 % were low severity, and a third were fixed in the very next batch anyway. The same pattern came back in consecutive PRs because each PR fixed one call site and the auditor found the next one. The direct cause was an auditor rule that deferred any fix touching a file outside the diff, "even if it looks safe".
+- **The rule.** Each finding gets `disposition` ∈ `included | sibling-pr | issue | dropped` (the source uses Spanish values; pick the English ones in the port and keep a mapping for the source tracker's existing inbox comments):
+  - Gate 0: a "measure / check / could" finding is verified in the run; if it doesn't hold, it is dropped with evidence.
+  - Gate 1: only hard blockers go to `issue`: a maintainer decision, a schema migration, protected config, something outside the repo, or a dependency on unmerged work.
+  - Gate 2 (`included`): it touches only files in the diff, new files only the diff imports, or tests and docs of those. It adds no new critical lane, stays within ~150 lines and 5 extra files, and is covered by a test. It includes a sweep of the same pattern across the lane, up to 8 sites.
+  - Gate 3 (`sibling-pr`): same area, low risk, ≤ 300 lines, done in the same run.
+- **Convergence.** Findings on code written to fix findings (round 2 and later) only enter if they are correctness at medium or higher. Two rounds at most, the same as the fix loop.
+- **Floor for new items.** Only bugs or security findings, or medium and higher. A low-severity debt finding becomes a comment on one accumulated-debt item per area.
+- **Dedupe by file.** The intake context returns the open items that mention the same files (`same_files_candidates`), not only text matches.
+- [ ] Auditor, QA lead, QA tester and guardian prompts emit `suggested_disposition` and `round`. The auditor's old "defer everything outside the diff" rule must not be ported.
+- [ ] The inbox schema requires `disposition`. The tracker's `inbox --pending` returns only `issue`. A missing `disposition` (legacy comment) reads as `issue`. A `backlog_hint` that is a level or type name ("Error", "Task") is rejected; the source saw this in a real inbox.
+- [ ] The close script validates `disposition` before posting the inbox comment.
+- [ ] Measure it in F6: new tracker items per PR (baseline ≈ 5.4) and lines of `included` delta per PR.
+
 ### Hooks and scripts (F2)
 
 - [ ] **`protect-files.js` false positive on the grant scripts.** In `source:.claude/hooks/protect-files.js:761-771`, the subagent check tests `GRANT_SCRIPT_ARG_RE` (`:187`) against *every word* of the command, not only the program being executed. So a subagent running `cat pmo-grant.mjs` or `grep … pmo-runtime.sh` is blocked as if it ran the script. Match only the executed program (the head, or the script argument of `node`/`bash`/`sh`). Add a regression test for reads and greps.
